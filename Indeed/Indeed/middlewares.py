@@ -4,6 +4,33 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware 
+import random,logging
+
+class UserAgentRotatorMiddleware(UserAgentMiddleware):
+    User_Agent_List = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0",
+        "Mozilla/5.0 (X11; Linux x86_64; rv:83.0) Gecko/20100101 Firefox/83.0",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5 (Ergänzendes Update)) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15",
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.8) Gecko/20100101 Firefox/60.8"
+    ]
+
+    def __init__(self, user_agent=''):
+        self.user_agent = user_agent
+
+    def process_request(self, request, spider):
+        try:
+            self.user_agent = random.choice(self.User_Agent_List)
+            request.headers.setdefault('User-Agent',self.user_agent) 
+            
+        except IndexError:
+            logging.error('Could not fetch the user agent')
+        
+
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
