@@ -18,18 +18,18 @@ class SoftwareJobsSpider(scrapy.Spider):
             yield response.follow(response.urljoin(next_page),callback=self.parse)
 
     def parse_jd(self,response):
+
         title = response.xpath("//h1/text()").get()
         jd = response.xpath("//div[@class='well well-sm']/p/text()").get()
-        date_posted = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[0].get().strip()
-        remote_work = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[1].get().strip()
-        location = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[2].get().strip()
-        Job_Type = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[3].get().strip()
-        Job_Schedule = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[4].get().strip()
-        Career_Level = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[5].get().strip()
-        Travel_req = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[6].get().strip()
-        S_and_ben = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[7].get().strip()
-        Other_Ben = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[8].get().strip()
-        Cat = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr/td/text()")[9].get().strip()
+        table = response.xpath("//table[@class='table table-striped table-sm mb-3']/tr")
+        date_posted = table.xpath(".//th[text()='Date Posted:']/../td/text()").get().strip()
+        remote_work = table.xpath(".//th[text()='Remote Work Level:']/../td/text()").get().strip()
+        location = table.xpath(".//th[text()='Location:']/../td/text()").get().strip()
+        Job_Type = table.xpath(".//th[text()='Job Type:']/../td/text()").get().strip()
+        Job_Schedule = table.xpath(".//th[text()='Date Posted:']/../td/text()").get().strip()
+        Career_Level = table.xpath(".//th[text()='Career Level:']/../td/text()").get().strip()
+        Travel_req = table.xpath(".//th[text()='Travel Required:']/../td/text()").get().strip()
+        Cat = table.xpath(".//th[text()='Categories:']/../td/a/text()").getall()
 
         yield{
             'Title' : title,
@@ -41,8 +41,8 @@ class SoftwareJobsSpider(scrapy.Spider):
             'Job Schedule' : Job_Schedule,
             'Career Level' : Career_Level,
             'Travel Required' : Travel_req,
-            'Salary & Benefits' : S_and_ben,
-            'Other Benefits' : Other_Ben,
+            # 'Salary & Benefits' : S_and_ben,
+            # 'Other Benefits' : Other_Ben,
             'Categories' : Cat,
             'User-Agent' : response.request.headers['User-Agent'].decode('utf-8')
 
